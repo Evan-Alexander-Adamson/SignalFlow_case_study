@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evan Adamson | Ideas on UX for mud logging operations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Adhering to the NEXUS UI Design System */
+        body {
+            background-color: #0A0E1F; /* Background Dark */
+            color: #FFFFFF; /* Primary Text */
+            font-family: 'Source Sans Pro', sans-serif;
+            line-height: 1.6; /* Improved line spacing for better readability */
+        }
+        .nexus-panel {
+            background-color: rgba(10, 14, 31, 0.9); /* Semi-transparent #0A0E1F */
+            border: 2px solid #00D4FF;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        .nexus-glow {
+             box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        .nexus-h1 { font-size: 40px; font-weight: 600; line-height: 1.2; }
+        .nexus-h2 { font-size: 28px; font-weight: 600; line-height: 1.3; }
+        .nexus-h3 { font-size: 20px; font-weight: 400; line-height: 1.4; }
+        .nexus-body { font-size: 18px; font-weight: 400; line-height: 1.6; } /* Increased from 16px */
+        .nexus-secondary-text { color: #8B95B7; }
+        
+        /* Interactive Prototype Styles */
+        .slider-track {
+            background: #1C2438;
+            height: 12px;
+            border-radius: 6px;
+        }
+        .slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #00D4FF;
+            cursor: pointer;
+            border: 4px solid #0A0E1F;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #00D4FF;
+            cursor: pointer;
+            border: 4px solid #0A0E1F;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #00D4FF;
+        }
+        .toggle-checkbox:checked + .toggle-label .toggle-thumb {
+            transform: translateX(36px);
+        }
+        
+        /* Improved readability for body text */
+        .pitch-text {
+            font-size: 18px;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        .pitch-text-large {
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .pitch-text-emphasis {
+            font-size: 18px;
+            line-height: 1.7;
+            font-weight: 600;
+            color: #00D4FF;
+        }
+        
+        /* Progress circle animation */
+        .progress-circle {
+            transition: stroke-dashoffset 2s ease-in-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .timeline-animation {
+            animation: fadeInUp 0.8s ease-out;
+        }
+    </style>
+</head>
+<body class="w-full">
+
+    <!-- Section 1: The Hook -->
+    <section class="min-h-screen w-full flex items-center py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto w-full">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Left Column: Text Content -->
+                <div class="space-y-8">
+                    <div>
+                        <h1 class="text-4xl md:text-6xl font-bold leading-tight" style="font-weight: 700;">Software should vanish.</h1>
+                        <h2 class="text-2xl md:text-4xl font-semibold mt-4 text-[#00D4FF]">So operators can focus on the task.</h2>
+                    </div>
+                    <p class="pitch-text nexus-secondary-text max-w-2xl">
+                        Upon reading the UX designer job description for Impac Exploration Services, I was excited to see concepts like "invisible UX" and rapid prototyping mentioned. 
+                    </p>
+                    <p>In an effort to show my design thinking and ability to rapidly prototype, I created a design exploration demonstrating how principles from music production software can create more intuitive, efficient, and safe interfaces for high-stakes industrial environments.</p>
+                </div>
+                
+                <!-- Right Column: Video -->
+                <div class="relative">
+                    <div class="aspect-video bg-[#131929] rounded-lg border-2 border-[#00D4FF] overflow-hidden">
+                        <video 
+                            id="intro-video"
+                            class="w-full h-full object-cover"
+                            autoplay 
+                            muted 
+                            playsinline
+                            poster="https://placehold.co/800x450/131929/8B95B7?text=Dashboard+Demo+Video">
+                            <source src="intro.mp4" type="video/mp4">
+                            <!-- Fallback content -->
+                            <div class="w-full h-full flex items-center justify-center">
+                                <div class="text-center">
+                                    <div class="text-6xl mb-4">🎥</div>
+                                    <p class="text-[#8B95B7] text-lg">Dashboard Demo Video</p>
+                                    <p class="text-[#8B95B7] text-sm mt-2">Interactive prototype demonstration</p>
+                                </div>
+                            </div>
+                        </video>
+                        
+                        <!-- Replay Button (hidden initially) -->
+                        <button 
+                            id="replay-btn" 
+                            class="absolute inset-0 w-full h-full bg-black/50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 hover:bg-black/60"
+                            style="display: none;">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-[#00D4FF] rounded-full flex items-center justify-center mb-4 mx-auto">
+                                    <span class="text-[#0A0E1F] text-2xl">▶️</span>
+                                </div>
+                                <p class="text-white text-lg font-semibold">Replay Video</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Section 2: The Hypothesis -->
+        <section class="py-20 md:py-32">
+            <div class="mb-16">
+                <h2 class="nexus-h1">Why Music Production is the Perfect Model for Industrial UX</h2>
+            </div>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <p class="pitch-text nexus-secondary-text">Designing for a drilling rig means designing for extreme conditions: gloved hands, hazardous environments, and operators who need essential information at a glance. The core challenge is reducing cognitive load.</p>
+                    <p class="pitch-text text-white">My insight comes from an unexpected field: music production. In digital audio workstations, producers manipulate vast amounts of complex data through intuitive, visual controls. The focus is on 'feel' and instant feedback, not just raw numbers. This is the essence of 'invisible UX'.</p>
+                    <p class="pitch-text-emphasis">I have created a design system concept called 'SignalFlow' to apply this philosphy.<br><br>In audio engineering, "Signal Flow" is the logical path an audio signal takes through faders, effects, and outputs. In drilling, it perfectly describes the flow of critical data from sensors to the operator's interface. This connection implies clarity, logic, and control. My conceptul design system SignalFlow aims to create interfaces for drillers that are faster to use, dramatically reduce the risk of error, and are less fatiguing over a long shift.</p>
+                </div>
+                <div class="nexus-panel p-6">
+                    <h3 class="nexus-h3 mb-4">Parallel Concepts: Intuitive Control</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <img src="ableton_example.png" alt="Ableton Echo Effect UI" class="rounded-lg w-full">
+                            <p class="mt-2 nexus-secondary-text text-sm">Ableton Live digital audio workstation</p>
+                        </div>
+                        <div>
+                            <div class="relative rounded-lg overflow-hidden bg-[#131929] border border-[#1C2438]">
+                                <video 
+                                    class="w-full h-full object-cover"
+                                    autoplay 
+                                    muted 
+                                    loop 
+                                    playsinline
+                                    poster="https://placehold.co/600x400/131929/8B95B7?text=Subsurface+Visualization">
+                                    <source src="subsurface_visual_final.mp4" type="video/mp4">
+                                    <!-- Fallback content -->
+                                    <div class="w-full h-full flex items-center justify-center" style="aspect-ratio: 3/4;">
+                                        <div class="text-center">
+                                            <div class="text-4xl mb-2">🌊</div>
+                                            <p class="text-[#8B95B7] text-sm">Subsurface Visualization</p>
+                                        </div>
+                                    </div>
+                                </video>
+                            </div>
+                            <p class="mt-2 nexus-secondary-text text-sm">Concept of real-time subsurface visualization dashboard</p>
+                        </div>
+                    </div>
+                     <p class="mt-4 nexus-secondary-text text-xs">Both interfaces translate complex numerical data into simple, direct-manipulation controls like sliders and toggles for intuitive operation.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: The Prototype -->
+        <section id="prototype" class="py-20 md:py-32">
+            <div class="mb-16">
+                <h2 class="nexus-h1">Live Demo #1: Field Operator’s Mobile Data Input & Alert Interface</h2>
+                <p class="pitch-text nexus-secondary-text mt-2 max-w-3xl">This is a fully interactive simulation of a drilling operations dashboard, built to the exact specifications of the SignalFlow design system. Experience how intuitive controls and real-time data visualization can transform complex operations into effortless decision-making.</p>
+            </div>
+            
+            <!-- Interactive Prototype Frame -->
+            <div class="nexus-panel p-8 md:p-12 max-w-6xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="nexus-h2">LIVE PROTOTYPE</h3>
+                    <span class="text-[#8B95B7] text-sm">Interactive Dashboard Demo</span>
+                </div>
+                
+                <!-- Design System Annotations -->
+                <div class="mb-6 p-4 bg-[#131929] rounded-lg border border-[#1C2438]">
+                    <h4 class="nexus-h3 text-[#00D4FF] mb-3">Key Design Features to Notice:</h4>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div class="space-y-2">
+                            <div class="flex items-start space-x-2">
+                                <span class="text-[#00D4FF] font-bold">•</span>
+                                <span class="nexus-secondary-text">Persistent bottom navigation for one-thumb operation</span>
+                            </div>
+                            <div class="flex items-start space-x-2">
+                                <span class="text-[#00D4FF] font-bold">•</span>
+                                <span class="nexus-secondary-text">56px minimum tap targets for gloved interaction</span>
+                            </div>
+                            <div class="flex items-start space-x-2">
+                                <span class="text-[#00D4FF] font-bold">•</span>
+                                <span class="nexus-secondary-text">Large 40px slider thumbs for precise control</span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-start space-x-2">
+                                <span class="text-[#00D4FF] font-bold">•</span>
+                                <span class="nexus-secondary-text">Critical red (#FF3B3B) for immediate safety alerts</span>
+                            </div>
+                            <div class="flex items-start space-x-2">
+                                <span class="text-[#00D4FF] font-bold">•</span>
+                                <span class="nexus-secondary-text">64px display font for at-a-glance readability</span>
+                            </div>
+                            <div class="flex items-start space-x-2">
+                                <span class="text-[#00D4FF] font-bold">•</span>
+                                <span class="nexus-secondary-text">Source Sans Pro for optimal legibility</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Button Annotation -->
+                <div class="mb-6 p-6 bg-[#00D4FF]/10 border-2 border-[#00D4FF] rounded-lg">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-16 h-16 bg-[#00D4FF] rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="text-[#0A0E1F] text-2xl">⚙️</span>
+                        </div>
+                        <div class="flex-1">
+                            <h5 class="nexus-h3 text-[#00D4FF] mb-2">🚨 IMPORTANT: Click the Settings Button!</h5>
+                            <p class="pitch-text nexus-secondary-text mb-3">
+                                In the prototype below, look for the <strong>"⚙️ Settings"</strong> button in the top-right corner. 
+                                Click it to explore the complete glove-optimized interface with:
+                            </p>
+                            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                <div class="space-y-2">
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-[#00D4FF] font-bold">•</span>
+                                        <span class="nexus-secondary-text">40px diameter slider thumbs for gloved hands</span>
+                                    </div>
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-[#00D4FF] font-bold">•</span>
+                                        <span class="nexus-secondary-text">56px minimum input field heights</span>
+                                    </div>
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-[#00D4FF] font-bold">•</span>
+                                        <span class="nexus-secondary-text">Large toggle switches (80px wide)</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-[#00D4FF] font-bold">•</span>
+                                        <span class="nexus-secondary-text">Precise number inputs with sliders</span>
+                                    </div>
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-[#00D4FF] font-bold">•</span>
+                                        <span class="nexus-secondary-text">Real-time threshold adjustments</span>
+                                    </div>
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-[#00D4FF] font-bold">•</span>
+                                        <span class="nexus-secondary-text">Haptic feedback controls</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Responsive iframe container with 16:9 aspect ratio -->
+                <div class="relative w-full" style="padding-bottom: 56.25%; /* 16:9 aspect ratio (9/16 = 0.5625) */">
+                    <iframe 
+                        src="https://evan-alexander-adamson.github.io/demo_1/" 
+                        class="absolute top-0 left-0 w-full h-full border-2 border-[#00D4FF] rounded-lg"
+                        style="min-height: 600px;"
+                        title="NEXUS UI Drilling Operations Dashboard"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                
+                <!-- Bottom Navigation Annotation -->
+                <div class="mt-4 p-4 bg-[#131929] rounded-lg border-l-4 border-[#00D4FF]">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-12 h-12 bg-[#00D4FF] rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="text-[#0A0E1F] text-xl">📱</span>
+                        </div>
+                        <div>
+                            <h5 class="nexus-h3 text-[#00D4FF] mb-1">Persistent Bottom Navigation</h5>
+                            <p class="nexus-body nexus-secondary-text">
+                                The bottom navigation bar remains fixed and accessible with one hand, 
+                                allowing operators to quickly switch between dashboard, data entry, alerts, 
+                                and reports without losing their place. This follows the 56px minimum tap target 
+                                requirement for gloved operation and uses high-contrast icons for immediate recognition.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <a href="https://evan-alexander-adamson.github.io/demo_1/" target="_blank" class="mt-6 inline-block bg-[#00D4FF] text-[#0A0E1F] text-lg font-bold py-4 px-8 rounded-lg transition-all duration-300 hover:scale-105 hover:brightness-125 border-2 border-[#00D4FF] hover:border-[#00D4FF]/80">
+                        <span class="flex items-center justify-center space-x-2">
+                            <span>View Fullscreen Prototype</span>
+                            <span>↗</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3.5: Live Demo #2 - Human-AI Collaborative Decision Module -->
+        <section class="py-20 md:py-32">
+            <div class="mb-16">
+                <h2 class="nexus-h1">Live Demo #2: Human-AI Collaborative Decision Module</h2>
+                <p class="pitch-text nexus-secondary-text mt-2 max-w-3xl">This prototype demonstrates how AI assistance can be seamlessly integrated into critical decision-making workflows. The 3D chromatograph visualization shows real-time data analysis with an "invisible" AI ribbon that surfaces recommendations only when needed.</p>
+            </div>
+            
+            <!-- Interactive Prototype Frame -->
+            <div class="nexus-panel p-8 md:p-12 max-w-6xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="nexus-h2">LIVE PROTOTYPE</h3>
+                    <span class="text-[#8B95B7] text-sm">AI-Assisted Chromatograph Dashboard</span>
+                </div>
+                
+                <!-- Design System Annotations -->
+                <div class="mb-6 p-4 bg-[#131929] rounded-lg border border-[#1C2438]">
+                    <h4 class="nexus-h3 text-[#00D4FF] mb-3">Key Design Features to Notice:</h4>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div class="space-y-2">
+                            <div class="flex items-start space-x-2">
+                                <span class="text-[#00D4FF] font-bold">•</span>
+                                <span class="nexus-secondary-text">Invisible AI assistance that appears only when needed</span>
+                            </div>
+                            <div class="flex items-start space-x-2">
+                                <span class="text-[#00D4FF] font-bold">•</span>
+                                <span class="nexus-secondary-text">Progressive disclosure with "Explain" toggle for transparency</span>
+                            </div>
+                            <div class="flex items-start space-x-2">
+                                <span class="text-[#00D4FF] font-bold">•</span>
+                                <span class="nexus-secondary-text">Real-time 3D data visualization with confidence scoring</span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-start space-x-2">
+                                <span class="text-[#00D4FF] font-bold">•</span>
+                                <span class="nexus-secondary-text">High-contrast alerts for immediate safety recognition</span>
+                            </div>
+                            <div class="flex items-start space-x-2">
+                                <span class="text-[#00D4FF] font-bold">•</span>
+                                <span class="nexus-secondary-text">Continuous data updates (0.2s cadence) for live decision support</span>
+                            </div>
+                            <div class="flex items-start space-x-2">
+                                <span class="text-[#00D4FF] font-bold">•</span>
+                                <span class="nexus-secondary-text">Trust-building through transparent AI rationale</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Ribbon Annotation -->
+                <div class="mb-6 p-6 bg-[#00D4FF]/10 border-2 border-[#00D4FF] rounded-lg">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-16 h-16 bg-[#00D4FF] rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="text-[#0A0E1F] text-2xl">🤖</span>
+                        </div>
+                        <div class="flex-1">
+                            <h5 class="nexus-h3 text-[#00D4FF] mb-2">🚨 IMPORTANT: Watch the AI Ribbon in Action!</h5>
+                            <p class="pitch-text nexus-secondary-text mb-3">
+                                In the prototype below, observe the <strong>AI suggestion ribbon</strong> at the bottom of the screen. 
+                                This demonstrates invisible UX principles:
+                            </p>
+                            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                <div class="space-y-2">
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-[#00D4FF] font-bold">•</span>
+                                        <span class="nexus-secondary-text">AI recommendations surface only when anomalies are detected</span>
+                                    </div>
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-[#00D4FF] font-bold">•</span>
+                                        <span class="nexus-secondary-text">Click "Explain" to reveal confidence scores and data snippets</span>
+                                    </div>
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-[#00D4FF] font-bold">•</span>
+                                        <span class="nexus-secondary-text">Real-time updates every 0.2 seconds for live decision support</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-[#00D4FF] font-bold">•</span>
+                                        <span class="nexus-secondary-text">Progressive disclosure builds trust through transparency</span>
+                                    </div>
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-[#00D4FF] font-bold">•</span>
+                                        <span class="nexus-secondary-text">High-contrast visual indicators for immediate recognition</span>
+                                    </div>
+                                    <div class="flex items-start space-x-2">
+                                        <span class="text-[#00D4FF] font-bold">•</span>
+                                        <span class="nexus-secondary-text">Non-intrusive design that doesn't interrupt workflow</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Responsive iframe container with 16:9 aspect ratio -->
+                <div class="relative w-full" style="padding-bottom: 56.25%; /* 16:9 aspect ratio (9/16 = 0.5625) */">
+                    <iframe 
+                        src="https://evan-alexander-adamson.github.io/demo_2/" 
+                        class="absolute top-0 left-0 w-full h-full border-2 border-[#00D4FF] rounded-lg"
+                        style="min-height: 600px;"
+                        title="Human-AI Collaborative Chromatograph Dashboard"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                
+                <!-- AI Collaboration Annotation -->
+                <div class="mt-4 p-4 bg-[#131929] rounded-lg border-l-4 border-[#00D4FF]">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-12 h-12 bg-[#00D4FF] rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="text-[#0A0E1F] text-xl">🧠</span>
+                        </div>
+                        <div>
+                            <h5 class="nexus-h3 text-[#00D4FF] mb-1">Human-AI Collaboration Design</h5>
+                            <p class="nexus-body nexus-secondary-text">
+                                This prototype demonstrates how AI can be integrated as a trusted partner rather than an intrusive tool to experienced operators. 
+                                The design philosophy focuses on building trust through transparency—showing confidence scores, 
+                                explaining rationale, and surfacing recommendations only when they add genuine value to the operator's workflow. 
+                                This approach ensures operators maintain control while benefiting from AI's analytical capabilities.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <a href="https://evan-alexander-adamson.github.io/demo_2/" target="_blank" class="mt-6 inline-block bg-[#00D4FF] text-[#0A0E1F] text-lg font-bold py-4 px-8 rounded-lg transition-all duration-300 hover:scale-105 hover:brightness-125 border-2 border-[#00D4FF] hover:border-[#00D4FF]/80">
+                        <span class="flex items-center justify-center space-x-2">
+                            <span>View AI Collaboration Demo</span>
+                            <span>↗</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: The Process -->
+        <section class="py-20 md:py-32">
+            <div class="mb-16">
+                <h2 class="nexus-h1">Inspired by Robust Design Systems</h2>
+                
+                <!-- Section 1: Real-World Design Analysis -->
+                <div class="grid lg:grid-cols-2 gap-12 items-start mb-16">
+                    <div>
+                        <h3 class="nexus-h2 text-[#00D4FF] mb-4">Drawing from Everyday Excellence</h3>
+                        <p class="pitch-text nexus-secondary-text mt-2 max-w-3xl">When I notice a good design in the wild, I like to draw it out to gain a deeper understanding. I feel my 2013 Toyota Tacoma has an overall great design, so I drew the stereo interface, something I interact with on a daily basis.</p>
+                        <p class="pitch-text nexus-secondary-text mt-4">This practice helps me understand how complex interfaces can feel intuitive and reliable. The SignalFlow UI design system was inspired by these real-world examples of interfaces that work seamlessly in demanding environments.</p>
+                    </div>
+                    <div class="nexus-panel p-6" style="aspect-ratio: 4/3;">
+                        <img src="stereo_wireframe.png" alt="Toyota Tacoma Stereo Wireframe" class="w-full h-full object-cover rounded-lg">
+                        <div class="mt-4 text-center">
+                            <p class="nexus-h3 text-[#00D4FF]">2013 Toyota Tacoma Stereo</p>
+                            <p class="nexus-secondary-text text-sm">Paper Wireframe</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: SpaceX Inspiration -->
+                <div class="grid lg:grid-cols-2 gap-12 items-start">
+                    <div>
+                        <h3 class="nexus-h2 text-[#00D4FF] mb-4">Learning from Mission Control</h3>
+                        <p class="pitch-text nexus-secondary-text mt-2 max-w-3xl">Further inspiration for this design system comes from SpaceX's mission control interfaces. Their organization handles complex operations while maintaining the "invisible UX" philosophy on some of humanity's most complex missions.</p>
+                    </div>
+                    <div class="nexus-panel p-6" style="aspect-ratio: 4/3;">
+                        <img src="space_x.png" alt="SpaceX Mission Control Interface" class="w-full h-full object-cover rounded-lg">
+                        <div class="mt-4 text-center">
+                            <p class="nexus-h3 text-[#00D4FF]">SpaceX Mission Control UI</p>
+                            <p class="nexus-secondary-text text-sm">Inspiration for SignalFlow Design System</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Transition Header -->
+            <div class="mb-16">
+                <h3 class="nexus-h2 text-[#00D4FF] mb-4">From Inspiration to Implementation</h3>
+                <p class="pitch-text nexus-secondary-text max-w-3xl">These insights from everyday design and mission control interfaces are combined with my research into mud logging to inform every element of the SignalFlow design system. Here's how those principles translate into practical design decisions for drilling environments.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="nexus-panel p-8">
+                    <h3 class="nexus-h3 text-[#00D4FF] mb-4">Glove-Optimized</h3>
+                    <p class="pitch-text nexus-secondary-text">Minimum tap targets of 56px and oversized 40px slider thumbs ensure easy manipulation for gloved hands in extreme conditions.</p>
+                </div>
+                <div class="nexus-panel p-8">
+                    <h3 class="nexus-h3 text-[#00D4FF] mb-4">High-Contrast Palette</h3>
+                    <p class="pitch-text nexus-secondary-text">A deep navy background (#0A0E1F) and bright cyan accent (#00D4FF) maximize legibility in all lighting conditions, from control rooms to outdoor rigs.</p>
+                </div>
+                 <div class="nexus-panel p-8">
+                    <h3 class="nexus-h3 text-[#00D4FF] mb-4">Readability-First</h3>
+                    <p class="pitch-text nexus-secondary-text">Selecting "Source Sans Pro" as a font and using a large type scale, ensures critical data is readable from a distance, reducing operator strain during long shifts.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: The Closing Pitch -->
+        <section class="py-20 md:py-32 border-t-2 border-[#00D4FF]/20">
+            <!-- Skills & Experience Cards -->
+            <div class="mb-16">
+                <h3 class="nexus-h2 text-[#00D4FF] mb-8">Learn More About My Design Process</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl">
+                                                            <!-- Rapid Prototyping Card -->
+                    <div class="nexus-panel p-6 flex flex-col h-full">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="relative">
+                                <svg class="w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
+                                    <!-- Background circle -->
+                                    <circle
+                                        cx="32" cy="32" r="28"
+                                        stroke="#1C2438" stroke-width="4"
+                                        fill="none"
+                                    />
+                                    <!-- Progress circle -->
+                                    <circle
+                                        cx="32" cy="32" r="28"
+                                        stroke="#00D4FF" stroke-width="4"
+                                        fill="none"
+                                        stroke-linecap="round"
+                                        stroke-dasharray="175.93"
+                                        stroke-dashoffset="175.93"
+                                        class="progress-circle"
+                                        style="stroke-dashoffset: 175.93;"
+                                    />
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span class="text-2xl">✅</span>
+                                </div>
+                            </div>
+                            <div class="text-left">
+                                <div class="nexus-h3 text-[#00D4FF]">Rapid Prototyping</div>
+                                <div class="nexus-secondary-text text-sm">6 days • July 28 - Aug 3</div>
+                            </div>
+                        </div>
+                        <div class="mt-auto">
+                            <a href="https://www.figma.com/design/XKhHz0oMzoFT3CUKus92Qc/Live-Demo--1--Mobile-Data-Input---Alert-Dashboard?node-id=1-3&t=OOhFHUedXMSg6vnL-1" target="_blank" class="inline-flex items-center bg-[#00D4FF] text-[#0A0E1F] px-4 py-2 rounded-lg hover:bg-[#00D4FF]/80 transition-all duration-300 text-sm font-semibold">
+                                <img src="figma_icon.png" alt="Figma" class="w-4 h-4 mr-2">
+                                View the Figma File
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- User Research & Field Testing Card -->
+                    <div class="nexus-panel p-6 flex flex-col h-full">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="relative">
+                                <div class="w-16 h-16 bg-[#00D4FF] rounded-full flex items-center justify-center">
+                                    <span class="text-[#0A0E1F] text-2xl">👥</span>
+                                </div>
+                            </div>
+                            <div class="text-left">
+                                <div class="nexus-h3 text-[#00D4FF]">User Research</div>
+                                <div class="nexus-secondary-text text-sm">View how I use Figma to brainstorm and empathize with users I haven't met yet</div>
+                            </div>
+                        </div>
+                        <div class="mt-auto">
+                            <a href="https://www.figma.com/board/uKYifvbot1mYuognmoooSz/Brainstorm?node-id=0-1&t=OOhFHUedXMSg6vnL-1" target="_blank" class="inline-flex items-center bg-[#00D4FF] text-[#0A0E1F] px-4 py-2 rounded-lg hover:bg-[#00D4FF]/80 transition-all duration-300 text-sm font-semibold">
+                                <img src="figma_icon.png" alt="Figma" class="w-4 h-4 mr-2">
+                                View Figma Board
+                            </a>
+                        </div>
+                    </div>
+
+                   
+                    </div>
+                </div>
+            </div>
+            
+            <h2 class="nexus-h1">Let's Collaborate on the Future of Industrial UX</h2>
+            <p class="pitch-text nexus-secondary-text max-w-4xl mt-6">
+                Your search for someone who can make complex things clear is exactly what inspired this project.<br><br> I believe there is a connection between sound engineers and oil engineers, that I am eager to explore with Impac Exploration Services.<br><br>This prototype demonstrates my approach: start with empathy for users you haven't met yet, design for extreme conditions, and ship fast.
+            </p>
+                          <p class="pitch-text-emphasis max-w-4xl mt-6">
+                  I'm ready to get mud on my boots, learn from real operators, and design interfaces that disappear—so your team can focus on what matters most.
+              </p>
+              
+              <!-- Thank You and Signature -->
+              <div class="mt-12 max-w-4xl">
+                  <p class="pitch-text nexus-secondary-text mb-6">
+                      Thank you for considering my application. I look forward to talking soon!
+                  </p>
+                  <div class="flex items-center space-x-4">
+                      <img src="signature.png" alt="Evan Adamson Signature" class="h-12">
+                      <span class="nexus-h3 text-[#00D4FF]">Evan Adamson</span>
+                  </div>
+              </div>
+              
+                            <div class="mt-10 flex items-center gap-8">
+                  <span class="text-[#00D4FF] font-bold">Evan Adamson</span>
+                  <span class="text-[#8B95B7]">|</span>
+                  <span class="text-[#00D4FF] font-bold">evan.alexander.adamson@gmail.com</span>
+                   <span class="text-[#8B95B7]">|</span>
+                  <a href="https://www.linkedin.com/in/evan-alexander-adamson/" target="_blank" class="text-[#00D4FF] hover:text-white transition-colors font-bold">LinkedIn Profile</a>
+              </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.getElementById('intro-video');
+            const replayBtn = document.getElementById('replay-btn');
+
+            // When video ends, show replay button
+            video.addEventListener('ended', function() {
+                replayBtn.style.display = 'flex';
+                setTimeout(() => {
+                    replayBtn.style.opacity = '1';
+                    replayBtn.style.pointerEvents = 'auto';
+                }, 100);
+            });
+
+            // Handle replay button click
+            replayBtn.addEventListener('click', function() {
+                video.currentTime = 0; // Rewind to beginning
+                video.play();
+                
+                // Hide replay button
+                replayBtn.style.opacity = '0';
+                replayBtn.style.pointerEvents = 'none';
+                
+                // Show replay button again when video ends
+                video.addEventListener('ended', function() {
+                    replayBtn.style.display = 'flex';
+                    setTimeout(() => {
+                        replayBtn.style.opacity = '1';
+                        replayBtn.style.pointerEvents = 'auto';
+                    }, 100);
+                }, { once: true });
+            });
+
+            // Progress circle animation
+            const progressCircle = document.querySelector('.progress-circle');
+            const timelineSection = document.querySelector('.py-20.md\\:py-32.border-t-2');
+            
+            if (progressCircle && timelineSection) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            // Add animation class
+                            entry.target.classList.add('timeline-animation');
+                            
+                            // Animate progress circle
+                            setTimeout(() => {
+                                progressCircle.style.strokeDashoffset = '0';
+                            }, 300);
+                            
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.3 });
+                
+                observer.observe(timelineSection);
+            }
+        });
+    </script>
+
+</body>
+</html>
